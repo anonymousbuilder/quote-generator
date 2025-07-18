@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Personalized Motivational Quotes</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+  body {
+    margin: 0;
+    height: 100vh;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    padding: 20px;
+    transition: background 1s ease;
+  }
+
+  #container {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    padding: 40px 50px;
+    max-width: 600px;
+    width: 100%;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    text-align: center;
+    position: relative;
+  }
+
+  h2 {
+    margin-bottom: 25px;
+  }
+
+  .question {
+    margin-bottom: 20px;
+    text-align: left;
+  }
+
+  select, button {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: none;
+    margin-top: 8px;
+    cursor: pointer;
+  }
+
+  button {
+    background: #5a4fcf;
+    color: white;
+    font-weight: 700;
+    box-shadow: 0 8px 20px rgba(90,79,207,0.35);
+    transition: background 0.3s ease;
+  }
+
+  button:hover {
+    background: #463db0;
+  }
+
+  #quoteSection {
+    display: none;
+  }
+
+  #quote {
+    font-size: 1.8rem;
+    font-weight: 700;
+    line-height: 1.4;
+    min-height: 120px;
+    opacity: 1;
+    transition: opacity 0.6s ease;
+  }
+
+  #author {
+    margin-top: 15px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #d1c4e9;
+    font-style: italic;
+    min-height: 30px;
+  }
+</style>
+</head>
+<body>
+
+<div id="container">
+  <!-- Questionnaire -->
+  <div id="questionnaire">
+    <h2>How are you feeling today?</h2>
+
+    <div class="question">
+      <label for="mood">Select your current mood:</label>
+      <select id="mood">
+        <option value="" disabled selected>Choose your mood</option>
+        <option value="positive">Happy / Positive</option>
+        <option value="stressed">Stressed / Anxious</option>
+        <option value="motivated">Motivated / Energetic</option>
+        <option value="tired">Tired / Low energy</option>
+        <option value="hopeful">Hopeful / Optimistic</option>
+      </select>
+    </div>
+
+    <div class="question">
+      <label for="challenge">Are you currently facing any challenges?</label>
+      <select id="challenge">
+        <option value="" disabled selected>Select one</option>
+        <option value="yes">Yes</option>
+        <option value="no">No</option>
+      </select>
+    </div>
+
+    <button id="startBtn">Get My Quote</button>
+  </div>
+
+  <!-- Quote Section -->
+  <div id="quoteSection">
+    <div id="quote">Loading your motivational quote...</div>
+    <div id="author"></div>
+    <button id="new-quote-btn">New Quote</button>
+  </div>
+</div>
+
+<script>
+  const quotes = {
+    positive: [
+      { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
+      { text: "Your limitation—it’s only your imagination.", author: "" },
+      { text: "Dream it. Wish it. Do it.", author: "" },
+      { text: "Happiness is not by chance, but by choice.", author: "Jim Rohn" },
+      { text: "Positive anything is better than negative nothing.", author: "Elbert Hubbard" },
+      { text: "Stay positive, work hard, make it happen.", author: "" },
+      { text: "Keep your face to the sunshine and you cannot see a shadow.", author: "Helen Keller" },
+    ],
+    stressed: [
+      { text: "This too shall pass.", author: "" },
+      { text: "Keep going. Everything you need will come to you at the perfect time.", author: "" },
+      { text: "You are stronger than you think.", author: "" },
+      { text: "Calm mind brings inner strength and self-confidence.", author: "Dalai Lama" },
+      { text: "Sometimes the most important thing in a whole day is the rest we take between two deep breaths.", author: "Etty Hillesum" },
+      { text: "Do not let what you cannot do interfere with what you can do.", author: "John Wooden" },
+      { text: "Take a deep breath. It’s just a bad day, not a bad life.", author: "" },
+    ],
+    motivated: [
+      { text: "Push yourself, because no one else is going to do it for you.", author: "" },
+      { text: "Great things never come from comfort zones.", author: "" },
+      { text: "Success doesn't just find you. You have to go out and get it.", author: "" },
+      { text: "Don’t watch the clock; do what it does. Keep going.", author: "Sam Levenson" },
+      { text: "The harder you work for something, the greater you’ll feel when you achieve it.", author: "" },
+      { text: "Dream bigger. Do bigger.", author: "" },
+      { text: "Little things make big days.", author: "" },
+    ],
+    tired: [
+      { text: "Rest if you must, but don't quit.", author: "" },
+      { text: "Sometimes the most productive thing you can do is relax.", author: "Mark Black" },
+      { text: "Don't stop when you're tired. Stop when you're done.", author: "" },
+      { text: "Take rest; a field that has rested gives a bountiful crop.", author: "Ovid" },
+      { text: "Almost everything will work again if you unplug it for a few minutes, including you.", author: "" },
+      { text: "Slow down and everything you are chasing will come around and catch you.", author: "John De Paola" },
+      { text: "Energy and persistence conquer all things.", author: "Benjamin Franklin" },
+    ],
+    hopeful: [
+      { text: "Every day may not be good, but there is something good in every day.", author: "Alice Morse Earle" },
+      { text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
+      { text: "Keep your face always toward the sunshine—and shadows will fall behind you.", author: "Walt Whitman" },
+      { text: "Hope is being able to see that there is light despite all of the darkness.", author: "Desmond Tutu" },
+      { text: "Once you choose hope, anything’s possible.", author: "Christopher Reeve" },
+      { text: "Where there is no vision, there is no hope.", author: "George Washington Carver" },
+      { text: "In the middle of every difficulty lies opportunity.", author: "Albert Einstein" },
+    ]
+  };
+
+  const bgGradients = [
+    "linear-gradient(135deg, #667eea, #764ba2)",  // purple-blue
+    "linear-gradient(135deg, #43cea2, #185a9d)",  // green-blue
+    "linear-gradient(135deg, #f7971e, #ffd200)",  // orange-yellow
+    "linear-gradient(135deg, #ff6a00, #ee0979)",  // orange-pink
+    "linear-gradient(135deg, #00c6ff, #0072ff)",  // light blue
+  ];
+
+  let bgIndex = 0;
+  let shuffledQuotes = [];
+  let quoteIndex = 0;
+  let currentMood = null;
+
+  const startBtn = document.getElementById('startBtn');
+  const moodSelect = document.getElementById('mood');
+  const challengeSelect = document.getElementById('challenge');
+  const questionnaire = document.getElementById('questionnaire');
+  const quoteSection = document.getElementById('quoteSection');
+  const quoteDiv = document.getElementById('quote');
+  const authorDiv = document.getElementById('author');
+  const newQuoteBtn = document.getElementById('new-quote-btn');
+
+  function fadeOutIn(element, newText, newAuthor) {
+    element.style.opacity = 0;
+    authorDiv.style.opacity = 0;
+    setTimeout(() => {
+      element.innerText = newText;
+      authorDiv.innerText = newAuthor ? `— ${newAuthor}` : "";
+      element.style.opacity = 1;
+      authorDiv.style.opacity = 1;
+    }, 600);
+  }
+
+  function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  function prepareQuotes(mood) {
+    // Clone and shuffle quotes for current mood
+    shuffledQuotes = shuffleArray([...quotes[mood]]);
+    quoteIndex = 0;
+  }
+
+  function generateQuote() {
+    if (!shuffledQuotes.length) {
+      quoteDiv.innerText = "No quotes available for this mood.";
+      authorDiv.innerText = "";
+      return;
+    }
+
+    if (quoteIndex >= shuffledQuotes.length) {
+      // Reshuffle when all quotes shown
+      prepareQuotes(currentMood);
+    }
+
+    const quoteObj = shuffledQuotes[quoteIndex];
+    quoteIndex++;
+
+    fadeOutIn(quoteDiv, quoteObj.text, quoteObj.author);
+
+    bgIndex = (bgIndex + 1) % bgGradients.length;
+    document.body.style.background = bgGradients[bgIndex];
+  }
+
+  startBtn.addEventListener('click', () => {
+    if (!moodSelect.value) {
+      alert("Please select your mood.");
+      return;
+    }
+    if (!challengeSelect.value) {
+      alert("Please answer the challenge question.");
+      return;
+    }
+
+    currentMood = moodSelect.value;
+    prepareQuotes(currentMood);
+
+    questionnaire.style.display = "none";
+    quoteSection.style.display = "block";
+
+    generateQuote();
+  });
+
+  newQuoteBtn.addEventListener('click', () => {
+    generateQuote();
+  });
+</script>
+
+</body>
+</html>
